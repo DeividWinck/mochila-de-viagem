@@ -21,8 +21,10 @@ form.addEventListener("submit", (evento) => {
     if (existe) {
         itemAtual.id = existe.id
         atualizaElemento(itemAtual, existe.id)
+
+        itens[itens.findIndex(elemento => elemento.id === existe.id)] = itemAtual
     } else {
-        itemAtual.id = itens.length
+        itemAtual.id = itens[itens.length -1] ? (itens[itens.length -1]).id +1 : 0;
         criaElemento(itemAtual)
         itens.push(itemAtual)
 
@@ -40,6 +42,7 @@ function criaElemento(item) {
     lista.innerHTML+=`
     <li class="item" data-id="${item.id}">
         <strong>${item.quantidade}</strong>${item.nome}
+        <button onclick="deletaElemento(${item.id})">X</button>
     </li>
     `
 }
@@ -48,7 +51,7 @@ function atualizaElemento(item, id){
     const lista = document.querySelector(".lista")
     const elementoExistente = lista.querySelector(`li[data-id="${id}"]`)
     console.log(elementoExistente)
-    elementoExistente.innerHTML = `<strong>${item.quantidade}</strong>${item.nome}`
+    elementoExistente.innerHTML = `<strong>${item.quantidade}</strong>${item.nome} <button onclick="deletaElemento(${item.id})">X</button>`
 
     // atualiza o item na lista de itens
     const index = itens.findIndex(i => i.id === item.id);
@@ -57,3 +60,16 @@ function atualizaElemento(item, id){
     }
 }
 
+
+function deletaElemento(id) {
+    const elemento = document.querySelector(`li[data-id="${id}"]`);
+    elemento.remove();
+  
+    // remove o item da lista de itens
+    const index = itens.findIndex(i => i.id === id);
+    if (index !== -1) {
+      itens.splice(index, 1);
+    }
+  
+    localStorage.setItem("itens", JSON.stringify(itens));
+  }
